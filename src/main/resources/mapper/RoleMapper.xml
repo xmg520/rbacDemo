@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+namespace:名称空间
+id:唯一标识
+resultType:返回值类型
+#{id}\?  最用使用? 方便通配符
+sql语句最后不加分号结尾
+-->
+<mapper namespace="com.mzx.rbacdemo.dao.RoleDao">
+
+    <!-- 条件查询 -->
+    <select id="findByMap" resultType="com.mzx.rbacdemo.pojo.Role">
+        select * from t_role
+        <where>
+            <if test="queryText != null">
+                and rolename like concat('%',#{queryText},'%')
+            </if>
+        </where>
+        limit #{start},#{size}
+    </select>
+
+    <delete id="deleteByMap">
+        delete from t_role where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="insertRolePermission">
+        insert into t_role_permission
+        (roleid,permissionid)
+        values
+        <foreach collection="permissionids" item="permissionid" separator=",">
+            (#{roleid},#{permissionid})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRolePermission">
+        delete from t_role_permission where roleid = #{roleid}
+    </delete>
+</mapper>

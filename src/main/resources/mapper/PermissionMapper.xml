@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+namespace:名称空间
+id:唯一标识
+resultType:返回值类型
+#{id}\?  最用使用? 方便通配符
+sql语句最后不加分号结尾
+-->
+<mapper namespace="com.mzx.rbacdemo.dao.PermissionDao">
+
+    <insert id="insertPermission">
+        insert into t_permission
+        (name,url,pid)
+        values
+        (#{name},#{url},#{pid} )
+    </insert>
+
+    <update id="updatePermission">
+        update t_permission
+        set name = #{name} , url = #{url}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from t_permission where id = #{id}
+    </delete>
+
+    <select id="queryPermissionsByUser" resultType="com.mzx.rbacdemo.pojo.Permission">
+        select
+         *
+        from t_permission
+        where id in(
+            select
+                permissionid
+            from t_role_permission
+            where roleid in (
+                select
+                    roleid
+                from t_user_role
+                where userid = #{id}
+            )
+        )
+    </select>
+</mapper>
